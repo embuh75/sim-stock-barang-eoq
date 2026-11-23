@@ -1,0 +1,21 @@
+{
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "build": "bun build src/index.ts --target bun --outdir ./dist",
+    "start": "NODE_ENV=production bun dist/index.js",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@elysia/cors": "^1.4.3",
+    "@elysia/openapi": "^1.4.17",
+    "@elysia/static": "^1.4.12",
+    "better-auth": "^1.7.27",
+    "elysia": "^1.4.32",
+    "mongoose": "^9.12.3",
+    "winston": "^3.19.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.5"
+  }
+}
