@@ -4,7 +4,7 @@
 
 1. jalana `bun install`
 
-2. atur .env ne
+2. atur .env & server\src\utils\env.ts
 
 3. jalana `bun dev`
 
