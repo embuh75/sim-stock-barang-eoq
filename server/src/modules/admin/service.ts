@@ -1,8 +1,6 @@
 import { auth } from "../../plugins/auth";
 import { isAPIError } from "better-auth/api";
-import { uploadsFile } from "../../utils/upload";
-import { deleteFile } from "../../utils/delete-file";
-import { env } from "../../utils/env";
+import { uploadsFile, deleteFile } from "../../utils/file-handling";
 
 export const createUser = async (body: any, headers: any) => {
   const folder = "avatar";
@@ -40,7 +38,7 @@ export const createUser = async (body: any, headers: any) => {
 
 export const listUser = async (query: any, headers: any) => {
   try {
-    const getUsers = await auth.api.listUsers({
+    const users = await auth.api.listUsers({
       query: {
         searchValue: query.name,
         searchField: "name",
@@ -55,15 +53,6 @@ export const listUser = async (query: any, headers: any) => {
       },
       headers,
     });
-    const avatarUrl = `${env.APP_URL}/file/avatar`;
-
-    const users = {
-      ...getUsers,
-      users: getUsers.users.map((user) => ({
-        ...user,
-        image: `${avatarUrl}/${user.image}`,
-      })),
-    };
 
     return users;
   } catch (err) {
@@ -82,9 +71,7 @@ export const getUser = async (params: any, headers: any) => {
       headers,
     });
 
-    const avatarUrl = `${env.APP_URL}/file/avatar`;
-
-    return { ...data, image: `${avatarUrl}/${data.image}` };
+    return data;
   } catch (err) {
     if (isAPIError(err)) {
       return { error: err?.message, status: err.status };

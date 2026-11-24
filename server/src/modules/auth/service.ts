@@ -1,7 +1,6 @@
+import { APIError } from "better-auth";
 import { auth } from "../../plugins/auth";
-import { APIError, isAPIError } from "better-auth/api";
-import { uploadsFile } from "../../utils/upload";
-import { deleteFile } from "../../utils/delete-file";
+import { uploadsFile, deleteFile } from "../../utils/file-handling";
 
 export const signInEmail = async (body: any) => {
   try {
@@ -15,11 +14,8 @@ export const signInEmail = async (body: any) => {
     });
 
     return data;
-  } 
-  catch (err) {
-    if (isAPIError(err)) {
-      return { error: err?.message, status: err.status };
-    }
+  } catch (err) {
+    throw err;
   }
 };
 
@@ -35,28 +31,14 @@ export const signInUsername = async (body: any) => {
     });
 
     return data;
-  } 
-  catch (err) {
-    if (isAPIError(err)) {
-      return { error: err?.message, status: err.status };
-    }
+  } catch (err) {
+    throw err;
   }
 };
 
 export const updateUser = async (body: any, headers: any) => {
   const getUser = await auth.api.getSession({ headers });
-  if (!getUser)
-    throw new APIError("NOT_FOUND", {
-      code: "401",
-      message: "Anda Belum Login!.",
-    });
-  if (body.password && !body.currentPassword)
-    throw new APIError("BAD_REQUEST", {
-      code: "422",
-      message: "Password lama wajib diisi!.",
-    });
-
-  const oldFileName = getUser.user.image;
+  const oldFileName = getUser?.user.image;
   let newFileName: string | undefined;
 
   try {
@@ -76,7 +58,7 @@ export const updateUser = async (body: any, headers: any) => {
       });
     }
 
-    if (body.email && body.email !== getUser.user.email) {
+    if (body.email && body.email !== getUser?.user.email) {
       await auth.api.changeEmail({ body: { newEmail: body.email }, headers });
     }
 
@@ -91,9 +73,7 @@ export const updateUser = async (body: any, headers: any) => {
   } catch (err) {
     if (newFileName) await deleteFile("avatar", newFileName);
 
-    if (isAPIError(err)) {
-      return { error: err?.message, status: err.status };
-    }
+    throw err;
   }
 
   if (newFileName) await deleteFile("avatar", oldFileName);
@@ -106,11 +86,8 @@ export const getMe = async (headers: any) => {
     const data = await auth.api.getSession({ headers });
 
     return data;
-  } 
-  catch (err) {
-    if (isAPIError(err)) {
-      return { error: err?.message, status: err.status };
-    }
+  } catch (err) {
+    throw err;
   }
 };
 
@@ -119,12 +96,9 @@ export const signOut = async (headers: any) => {
     await auth.api.signOut({
       headers,
     });
-  } 
-  catch (err) {
-    if (isAPIError(err)) {
-      return { error: err?.message, status: err.status };
-    }
+  } catch (err) {
+    throw err;
   }
 
-  return {success: true, message: "Logout Berhasil!."}
+  return { success: true, message: "Logout Berhasil!." };
 };

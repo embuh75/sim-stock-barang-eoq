@@ -8,6 +8,8 @@
 
 3. jalana `bun dev`
 
+4. bukak docs: http://localhost:3000/api/v1/openapi
+
 **TODO LIST AUTH**
 
 - Beneri Username Sign-In

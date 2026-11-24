@@ -6,7 +6,6 @@
       "dependencies": {
         "@elysia/cors": "^1.4.3",
         "@elysia/openapi": "^1.4.17",
-        "@elysia/static": "^1.4.12",
         "better-auth": "^1.7.27",
         "elysia": "^1.4.32",
         "mongoose": "^9.12.3",
@@ -46,8 +45,6 @@
     "@elysia/cors": ["@elysia/cors@1.4.3", "", { "peerDependencies": { "elysia": ">= 1.4.0" } }, "sha512-GaqNr6ufqAKbw8SVbxYozHdGFQm1AhXWvndWvoK9uyep99Jq+uI5msQfRkzUo1s5QGIjkCkCGX9XGViaDsp+0A=="],
 
     "@elysia/openapi": ["@elysia/openapi@1.4.17", "", { "peerDependencies": { "@sinclair/typebox": ">= 0.34.0 < 1", "elysia": ">= 1.4.0", "typescript": ">= 5.0.0" } }, "sha512-rmyqxfoQyM6QMsxelt6RMuM8b0I6y33KgGcrm5LKw2xIOVHRFg9EAbxFejZBfyZmVYkY3EazgaPNlEz4HJ3Thg=="],
-
-    "@elysia/static": ["@elysia/static@1.4.12", "", { "peerDependencies": { "elysia": ">= 1.4.0" } }, "sha512-kJRsIxXqtgE+qSYyta+e5aXSQSMfIjmDmqw6x8sXmytcpZrulYmb5dHHc5tk3Bgcbf3zSwN17fQozFkq5CXAdw=="],
 
     "@mongodb-js/saslprep": ["@mongodb-js/saslprep@1.6.3", "", { "dependencies": { "sparse-bitfield": "^3.0.3" } }, "sha512-aHGFvT95c82CoQ7hb6qXpz8Hcc5PJb3ZtQ+P01QDBbyQday0mjcrJPeNJOHCgWe0pGX0zKmKP+1mWi/I/BCX9Q=="],
 

@@ -1,30 +1,25 @@
 import { Elysia, t } from "elysia";
-import {createUser, getUser, listUser, updateUser} from "./service"
+import { myValidator } from "../../utils/validator";
+import { createUser, getUser, listUser, updateUser } from "./service";
 
-export const adminRoute = new Elysia({prefix: "/admin"});
+export const adminRoute = new Elysia({ prefix: "/admin" });
 
 // Create User
 adminRoute.post(
   "/createuser",
   ({ body, headers }) => createUser(body, headers),
   {
+    headers: t.Object({
+      cookie: myValidator.cookie,
+    }),
     admin: true,
     body: t.Object({
-      email: t.String({
-        format: "email",
-        examples: ["username@email.com"],
-      }),
-      name: t.String({ minLength: 3 }),
-      password: t.String({ minLength: 8 }),
-      username: t.Optional(t.String({ minLength: 3 })),
-      image: t.Optional(
-        t.File({
-          type: "image/*",
-          maxSize: "1m",
-          examples: ["image.jpg", "image.png"],
-        }),
-      ),
-      role: t.UnionEnum(["user", "admin"]),
+      email: myValidator.email,
+      name: myValidator.name,
+      password: myValidator.password,
+      username: t.Optional(myValidator.username),
+      image: t.Optional(myValidator.image),
+      role: myValidator.role,
     }),
     detail: {
       tags: ["Admin"],
@@ -37,18 +32,17 @@ adminRoute.post(
 
 // List User
 adminRoute.get("/listuser", ({ query, headers }) => listUser(query, headers), {
+  headers: t.Object({
+    cookie: myValidator.cookie,
+  }),
+  admin: true,
   query: t.Object({
-    name: t.Optional(t.String({ minLength: 1 })),
-    page: t.Number({ minimum: 1, default: 1 }),
-    limit: t.Number({ minimum: 1, maximum: 100, default: 10 }),
-    roleFilter: t.Optional(t.Union([t.Literal("admin"), t.Literal("user")])),
-    sortBy: t.Union(
-      [t.Literal("name"), t.Literal("email"), t.Literal("createdAt")],
-      { default: "createdAt" },
-    ),
-    sortOrder: t.Union([t.Literal("asc"), t.Literal("desc")], {
-      default: "desc",
-    }),
+    name: t.Optional(myValidator.name),
+    page: myValidator.page,
+    limit: myValidator.limit,
+    roleFilter: myValidator.roleFilter,
+    sortBy: myValidator.usersSorting,
+    sortOrder: myValidator.usersOrder,
   }),
   detail: {
     tags: ["Admin"],
@@ -63,7 +57,11 @@ adminRoute.get(
   "/getuser/:id",
   ({ params, headers }) => getUser(params, headers),
   {
-    params: t.Object({ id: t.String() }),
+    headers: t.Object({
+      cookie: myValidator.cookie,
+    }),
+    admin: true,
+    params: t.Object({ id: myValidator.id }),
     detail: {
       tags: ["Admin"],
       summary: "Get User by Id",
@@ -78,20 +76,18 @@ adminRoute.patch(
   "/updateuser/:id",
   ({ params, headers, body }) => updateUser(params, headers, body),
   {
-    params: t.Object({ id: t.String() }),
+    headers: t.Object({
+      cookie: myValidator.cookie,
+    }),
+    admin: true,
+    params: t.Object({ id: myValidator.id }),
     body: t.Object({
-      name: t.Optional(t.String()),
-      email: t.String({ format: "email" }),
-      role: t.UnionEnum(["user", "admin"]),
-      username: t.Optional(t.String()),
-      password: t.Optional(t.String()),
-      image: t.Optional(
-        t.File({
-          type: "image/*",
-          maxSize: "1m",
-          examples: ["image.jpg", "image.png"],
-        }),
-      ),
+      name: t.Optional(myValidator.name),
+      email: myValidator.email,
+      role: myValidator.role,
+      username: t.Optional(myValidator.username),
+      password: t.Optional(myValidator.password),
+      image: t.Optional(myValidator.image),
     }),
     detail: {
       tags: ["Admin"],

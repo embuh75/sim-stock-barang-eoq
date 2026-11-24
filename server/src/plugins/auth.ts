@@ -1,8 +1,7 @@
 import { betterAuth } from "better-auth";
-import { username, admin, customSession,  } from "better-auth/plugins";
+import { username, admin } from "better-auth/plugins";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { Db } from "../database";
-import { sessionResponse } from "../utils/response";
 
 export const auth = betterAuth({
   database: mongodbAdapter(Db),
@@ -22,8 +21,26 @@ export const auth = betterAuth({
     },
     changeEmail: { enabled: true, updateEmailWithoutVerification: true },
   },
-  plugins: [
-    username({ displayUsername: false }),
-    admin(),
-  ],
+  plugins: [username({ displayUsername: false }), admin()],
 });
+
+export const authGuard = {
+  auth: {
+    async resolve({ request, status }: any) {
+      const session = await auth.api.getSession({ headers: request.headers });
+      if (!session)
+        return status(401, { success: false, message: "Akses tidak diizinkan, silahkan login dahulu." });
+      return { user: session.user };
+    },
+  },
+  admin: {
+    async resolve({ request, status }: any) {
+      const session = await auth.api.getSession({ headers: request.headers });
+      if (!session)
+        return status(401, { success: false, message: "Akses tidak diizinkan, silahkan login dahulu." });
+      if (session.user.role !== "admin")
+        return status(403, { success: false, message: "Akses tidak diizinkan, hanya admin yang dapat melakukan tindakan ini." });
+      return { user: session.user };
+    },
+  },
+};

@@ -1,23 +1,15 @@
 import { Elysia, t } from "elysia";
-import {
-  signInEmail,
-  signInUsername,
-  getMe,
-  updateUser,
-  signOut,
-} from "./service";
+import { myValidator } from "../../utils/validator";
+import { signInEmail, signInUsername, getMe, updateUser, signOut } from "./service";
 
 export const authRoute = new Elysia({ prefix: "/auth" });
 
 // SignIn Email
 authRoute.post("/signinemail", ({ body }) => signInEmail(body), {
   body: t.Object({
-    email: t.String({
-      format: "email",
-      examples: ["username@email.com"],
-    }),
-    password: t.String({ minLength: 8 }),
-    rememberMe: t.Optional(t.BooleanString()),
+    email: myValidator.email,
+    password: myValidator.password,
+    rememberMe: t.Optional(myValidator.rememberMe),
   }),
   detail: {
     tags: ["Autentikasi"],
@@ -29,9 +21,9 @@ authRoute.post("/signinemail", ({ body }) => signInEmail(body), {
 // SignIn Username
 authRoute.post("/signinusername", ({ body }) => signInUsername(body), {
   body: t.Object({
-    username: t.String({ minLength: 3, examples: ["user69", "user67"] }),
-    password: t.String({ minLength: 8 }),
-    rememberMe: t.Optional(t.BooleanString()),
+    username: myValidator.username,
+    password: myValidator.password,
+    rememberMe: t.Optional(myValidator.rememberMe),
   }),
   detail: {
     tags: ["Autentikasi"],
@@ -45,20 +37,17 @@ authRoute.patch(
   "/updateuser",
   ({ body, headers }) => updateUser(body, headers),
   {
+    headers: t.Object({
+      cookie: myValidator.cookie,
+    }),
     body: t.Object({
-      name: t.Optional(t.String()),
-      email: t.Optional(t.String({ format: "email" })),
-      username: t.Optional(t.String()),
-      password: t.Optional(t.String()),
-      currentPassword: t.Optional(t.String()),
-      logoutAll: t.Optional(t.BooleanString()),
-      image: t.Optional(
-        t.File({
-          type: "image/*",
-          maxSize: "1m",
-          examples: ["image.jpg", "image.png"],
-        }),
-      ),
+      name: t.Optional(myValidator.name),
+      email: t.Optional(myValidator.email),
+      username: t.Optional(myValidator.username),
+      password: t.Optional(myValidator.password),
+      currentPassword: t.Optional(myValidator.currentPassword),
+      logoutAll: t.Optional(myValidator.logoutAll),
+      image: t.Optional(myValidator.image),
     }),
     detail: {
       tags: ["Autentikasi"],
@@ -73,7 +62,7 @@ authRoute.patch(
 // Session Check
 authRoute.get("/me", ({ headers }) => getMe(headers), {
   headers: t.Object({
-    cookie: t.String({ description: "Cookie session Better Auth" }),
+    cookie: myValidator.cookie,
   }),
   detail: {
     tags: ["Autentikasi"],
@@ -86,7 +75,7 @@ authRoute.get("/me", ({ headers }) => getMe(headers), {
 // SignOut
 authRoute.post("/signout", ({ headers }) => signOut(headers), {
   headers: t.Object({
-    cookie: t.String({ description: "Cookie session Better Auth" }),
+    cookie: myValidator.cookie,
   }),
   detail: {
     tags: ["Autentikasi"],
